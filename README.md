@@ -100,28 +100,26 @@ The outputs can be used for forward modeling of time-ordered data (TOD), respons
    - Place beam grid in `grid.txt` (for real beam mode).
 
 2. **Run elliptical beam scan:**
-   ```bash
-   gfortran elliptical_convolution.f90 -o elliptical_convolution
-   ./elliptical_convolution
-````
+   **`gfortran elliptical_convolution.f90 -o elliptical_convolution
+   ./elliptical_convolution`**
 
 → Produces `convolved_map.dat`.
 
 3. **Run real beam scan with MPI:**
 
-   ```bash
+   **`
    mpif90 constants.f90 subroutines.f90 RealBeam_convolution.f90 -o real_beam
    mpirun -np 48 ./real_beam
-   ```
+   `**
 
    → Produces `results_0.dat … results_47.dat`.
 
 4. **Extract neighbors for response matrix (optional):**
 
-   ```bash
+   **`
    gfortran response_matrix_neighbors.f90 -o extract_neighbors
    ./extract_neighbors
-   ```
+   `**
 
    → Produces `neighbors_0.dat … neighbors_47.dat`.
 
@@ -141,5 +139,3 @@ The outputs can be used for forward modeling of time-ordered data (TOD), respons
 * **Real Beam Code** → produces **response matrix** (weights for later convolution).
 * **Neighbors Code** → links response matrix pixels back to HEALPix neighbors.
 * **Python Tools** → generate input maps and analyze outputs.
-
-
