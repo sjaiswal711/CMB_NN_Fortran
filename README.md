@@ -17,15 +17,15 @@ The outputs can be used for forward modeling of time-ordered data (TOD), respons
 ├── README.md
 ├── constants.f90                  # Parameter definitions (angles, frequencies, steps)
 ├── subroutines.f90                # Subroutines for vectors, HEALPix queries, and time-step processing
-├── RealBeam\_convolution.f90       # Main MPI program for realistic beam simulation
-├── elliptical\_convolution.f90     # Main program for elliptical Gaussian beam convolution
-├── response\_matrix\_neighbors.f90  # Extracts neighboring pixel lists for response matrix pixels
+├── RealBeam_convolution.f90       # Main MPI program for realistic beam simulation
+├── elliptical_convolution.f90     # Main program for elliptical Gaussian beam convolution
+├── neighbors_matrix.f90  # Extracts neighboring pixel lists for response matrix pixels
 ├── grid.txt                       # Pre-computed grid of real beam weights
 ├── map.fits                       # Example HEALPix input map
-├── yearly\_scan\_frequency/         # Output: how many times each pixel was scanned
+├── yearly_scan_frequency.f90       # Output: how many times each pixel was scanned
 ├── python/
-│   ├── gen\_cmb\_maps.py            # Generate 1000 CMB maps from CAMB Cl
-│   ├── convolve\_maps.py           # Convolve foreground and CMB maps
+│   ├── gen_cmb_maps.py            # Generate 1000 CMB maps from CAMB Cl
+│   ├── convolve_maps.py           # Convolve foreground and CMB maps
 │   └── ...
 
 ````
@@ -57,11 +57,11 @@ The outputs can be used for forward modeling of time-ordered data (TOD), respons
 - **Process:**
   - Uses MPI to parallelize over sky pixels.
   - Computes a **response matrix**:
-    - Each row corresponds to a satellite pointing.
+    - Each row corresponds to a pixel.
     - Each entry gives beam weights for neighboring HEALPix pixels.
-  - Stores intermediate results per rank (`results_0.dat … results_47.dat`).
+  - Stores intermediate results per rank (`beam_response_mat_0.dat … beam_response_mat_47.dat`).
 - **Output:**
-  - `results_rank.dat` files (one per MPI rank), containing:
+  - `beam_response_mat_{rank}.dat` files (one per MPI rank), containing:
     ```
     node_id   pixel   count   weight1   weight2   ...
     ```
@@ -69,13 +69,10 @@ The outputs can be used for forward modeling of time-ordered data (TOD), respons
 ---
 
 ### 🔹 Response Matrix Neighbors (`response_matrix_neighbors.f90`)
-- **Input:**
-  - `results_rank.dat` files from Real Beam simulation.
 - **Process:**
-  - Extracts the **48 neighboring HEALPix pixel indices** for each response matrix pixel.
-  - Facilitates linking response weights back to sky pixels.
+  - Extracts the **neighboring HEALPix pixel indices** for each response matrix pixel.
 - **Output:**
-  - `neighbors_rank.dat` files with neighbor pixel indices.
+  - `neighbors_mat_{rank}.dat` files with neighbor pixel indice.
 
 ---
 
@@ -112,7 +109,7 @@ The outputs can be used for forward modeling of time-ordered data (TOD), respons
    mpirun -np 48 ./real_beam
    `**
 
-   → Produces `results_0.dat … results_47.dat`.
+   → Produces `beam_response_mat_0.dat … beam_response_mat_{rank}.dat`.
 
 4. **Extract neighbors for response matrix (optional):**
 
@@ -128,9 +125,7 @@ The outputs can be used for forward modeling of time-ordered data (TOD), respons
 ## ⚠️ File Size Warning
 
 * The `.dat` outputs (`results_*.dat`, `neighbors_*.dat`, `convolved_map.dat`) can be **hundreds of GB** depending on scan duration and resolution.
-* **Do not upload these files to GitHub.**
-* Instead, keep them in local storage or use an external data repository (e.g., Zenodo, Figshare, institutional storage).
-
+* One can check for nside = 258 or lower, for change the `length` and `nside` value.
 ---
 
 ## 📌 Summary
