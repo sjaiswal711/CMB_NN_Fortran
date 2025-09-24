@@ -288,7 +288,7 @@ program main
 
 
 ! Open file for writing
-    open(unit=output_unit, file='results.dat', status='replace', action='write', iostat=ios)
+    open(unit=output_unit, file='convolved_map.dat', status='replace', action='write', iostat=ios)
     if (ios /= 0) then
         print *, 'Error opening file for writing.'
         stop
