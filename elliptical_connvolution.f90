@@ -20,9 +20,9 @@ contains
         theta1 = 7.5 * pi / 180.0d0
         theta2 = 85.0 * pi / 180.0d0
         w1 = 2.0d0 * pi  ! rad/min
-        w2 = 2.0d0 * w1  ! rad/min
         w3 = 0.000011954d0  ! rad/min
-
+		w2 = 2.0d0 * w3  ! rad/min
+		
         nside = 128
         npix = 12 * nside**2
 
@@ -101,12 +101,12 @@ subroutine get_vectors(t, result_r, result_s)
   sin_theta2 = sin(theta2)
 
   ! Define the matrices
-  A = reshape([cos_w1t, sin_w1t, 0.0d0, -sin_w1t, cos_w1t, 0.0d0, 0.0d0, 0.0d0, 1.0d0], [3, 3], order=[2,1])
+  A = reshape([cos_w3t, sin_w3t, 0.0d0, -sin_w3t, cos_w3t, 0.0d0, 0.0d0, 0.0d0, 1.0d0], [3, 3], order=[2,1])
   B = reshape([1.0d0, 0.0d0, 0.0d0, 0.0d0, cos_w2t, sin_w2t, 0.0d0, -sin_w2t, cos_w2t], [3, 3], order=[2,1])
   C = reshape([cos_theta1, 0.0d0, sin_theta1, 0.0d0, 1.0d0, 0.0d0, -sin_theta1, 0.0d0, cos_theta1], [3, 3], order=[2,1])
 
   ! Define vectors
-  D_R = reshape([cos_theta2, sin_theta2 * cos(w3 * t), sin_theta2 * sin(w3 * t)], [3, 1], order=[2,1])
+  D_R = reshape([cos_theta2, sin_theta2 * cosw1t, sin_theta2 * sinw1t], [3, 1], order=[2,1])
   D_S = reshape([1.0d0, 0.0d0, 0.0d0], [3, 1], order=[2,1])
 
   ! Perform matrix multiplications (optimized)
@@ -322,10 +322,3 @@ program main
     deallocate(map)
 
 end program main
-
-
-
-
-
-
-
