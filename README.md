@@ -9,6 +9,26 @@ The outputs can be used for forward modeling of time-ordered data (TOD), respons
 
 ---
 
+## 📂 Repository Structure
+
+```
+
+.
+├── README.md
+├── constants.f90                  # Parameter definitions (angles, frequencies, steps)
+├── subroutines.f90                # Subroutines for vectors, HEALPix queries, and time-step processing
+├── RealBeam\_convolution.f90       # Main MPI program for realistic beam simulation
+├── elliptical\_convolution.f90     # Main program for elliptical Gaussian beam convolution
+├── response\_matrix\_neighbors.f90  # Extracts neighboring pixel lists for response matrix pixels
+├── grid.txt                       # Pre-computed grid of real beam weights
+├── map.fits                       # Example HEALPix input map
+├── yearly\_scan\_frequency/         # Output: how many times each pixel was scanned
+├── python/
+│   ├── gen\_cmb\_maps.py            # Generate 1000 CMB maps from CAMB Cl
+│   ├── convolve\_maps.py           # Convolve foreground and CMB maps
+│   └── ...
+
+````
 
 ---
 
@@ -83,3 +103,43 @@ The outputs can be used for forward modeling of time-ordered data (TOD), respons
    ```bash
    gfortran elliptical_convolution.f90 -o elliptical_convolution
    ./elliptical_convolution
+````
+
+→ Produces `convolved_map.dat`.
+
+3. **Run real beam scan with MPI:**
+
+   ```bash
+   mpif90 constants.f90 subroutines.f90 RealBeam_convolution.f90 -o real_beam
+   mpirun -np 48 ./real_beam
+   ```
+
+   → Produces `results_0.dat … results_47.dat`.
+
+4. **Extract neighbors for response matrix (optional):**
+
+   ```bash
+   gfortran response_matrix_neighbors.f90 -o extract_neighbors
+   ./extract_neighbors
+   ```
+
+   → Produces `neighbors_0.dat … neighbors_47.dat`.
+
+---
+
+## ⚠️ File Size Warning
+
+* The `.dat` outputs (`results_*.dat`, `neighbors_*.dat`, `convolved_map.dat`) can be **hundreds of GB** depending on scan duration and resolution.
+* **Do not upload these files to GitHub.**
+* Instead, keep them in local storage or use an external data repository (e.g., Zenodo, Figshare, institutional storage).
+
+---
+
+## 📌 Summary
+
+* **Elliptical Beam Code** → produces **time-ordered convolved map**.
+* **Real Beam Code** → produces **response matrix** (weights for later convolution).
+* **Neighbors Code** → links response matrix pixels back to HEALPix neighbors.
+* **Python Tools** → generate input maps and analyze outputs.
+
+
