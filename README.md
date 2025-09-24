@@ -19,7 +19,7 @@ The outputs can be used for forward modeling of time-ordered data (TOD), respons
 ├── subroutines.f90                # Subroutines for vectors, HEALPix queries, and time-step processing
 ├── RealBeam_convolution.f90       # Main MPI program for realistic beam simulation
 ├── elliptical_convolution.f90     # Main program for elliptical Gaussian beam convolution
-├── neighbors_matrix.f90  # Extracts neighboring pixel lists for response matrix pixels
+├── neighbors_matrix.f90  # Extracts neighboring pixel for response matrix neighbouring pixels
 ├── grid.txt                       # Pre-computed grid of real beam weights
 ├── map.fits                       # Example HEALPix input map
 ├── yearly_scan_frequency.f90       # Output: how many times each pixel was scanned
@@ -68,7 +68,7 @@ The outputs can be used for forward modeling of time-ordered data (TOD), respons
 
 ---
 
-### 🔹 Response Matrix Neighbors (`response_matrix_neighbors.f90`)
+### 🔹 Response Matrix Neighbors (`neighbors_matrix.f90`)
 - **Process:**
   - Extracts the **neighboring HEALPix pixel indices** for each response matrix pixel.
 - **Output:**
@@ -114,18 +114,18 @@ The outputs can be used for forward modeling of time-ordered data (TOD), respons
 4. **Extract neighbors for response matrix (optional):**
 
    **`
-   gfortran response_matrix_neighbors.f90 -o extract_neighbors
+   gfortran neighbors_matrix.f90 -o extract_neighbors
    ./extract_neighbors
    `**
 
-   → Produces `neighbors_0.dat … neighbors_47.dat`.
+   → Produces `neighbors_mat_0.dat … neighbors_mat_47.dat`.
 
 ---
 
 ## ⚠️ File Size Warning
 
-* The `.dat` outputs (`results_*.dat`, `neighbors_*.dat`, `convolved_map.dat`) can be **hundreds of GB** depending on scan duration and resolution.
-* One can check for nside = 258 or lower, for change the `length` and `nside` value.
+* The `.dat` outputs (`beam_response_mat_*.dat`, `neighbors_mat_*.dat`, `convolved_map.dat`) can be **hundreds of GB** depending on scan duration and resolution.
+* To reduce size, use a lower NSIDE (e.g., NSIDE=256) or adjust the scan length in constants.f90.
 ---
 
 ## 📌 Summary
